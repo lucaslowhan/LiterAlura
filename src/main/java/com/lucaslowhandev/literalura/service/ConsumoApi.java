@@ -8,7 +8,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@Service
 public class ConsumoApi {
     public String obterDados(String endereco){
         HttpClient client = HttpClient.newHttpClient();
@@ -26,7 +25,6 @@ public class ConsumoApi {
             throw new RuntimeException(e);
         }
 
-        String json = response.body();
-        return json;
+        return response.body();
     }
 }

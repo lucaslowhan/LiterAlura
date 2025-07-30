@@ -1,33 +1,37 @@
 package com.lucaslowhandev.literalura.model;
 
+import com.lucaslowhandev.literalura.dto.AutorDTO;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Entity
+@Entity(name = "Autor")
 @Table(name = "autores")
 public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
+    private String nome;
+    private Integer anoNascimento;
+    private Integer anoFalecimento;
+    @OneToMany(mappedBy = "autor",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private Set<Livro> livros = new LinkedHashSet<>();
 
-    @Column(name = "autor")
-    private String name;
+    public Autor(){}
 
-    @Column(name = "data_nascimento")
-    private Integer dataNascimento;
+    public Autor(AutorDTO data){
+        this.nome = data.nome();
+        this.anoNascimento = data.anoNascimento();
+        this.anoFalecimento = data.anoFalecimento();
+    }
 
-    @Column(name = "data_morte")
-    private Integer dataMorte;
-
-    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Livro> livros = new ArrayList<>();
-
-    public Autor(String name, Integer dataNascimento, Integer dataMorte){
-        this.name = name;
-        this.dataNascimento = dataNascimento;
-        this.dataMorte = dataMorte;
+    public Autor(String nome, Integer anoNascimento, Integer anoFalecimento){
+        this.nome = nome;
+        this.anoNascimento = anoNascimento;
+        this.anoFalecimento = anoFalecimento;
     }
 
     public Long getId() {
@@ -38,35 +42,45 @@ public class Autor {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public Integer getDataNascimento() {
-        return dataNascimento;
+    public Integer getAnoNascimento() {
+        return anoNascimento;
     }
 
-    public void setDataNascimento(Integer dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setAnoNascimento(Integer anoNascimento) {
+        this.anoNascimento = anoNascimento;
     }
 
-    public Integer getDataMorte() {
-        return dataMorte;
+    public Integer getAnoFalecimento() {
+        return anoFalecimento;
     }
 
-    public void setDataMorte(Integer dataMorte) {
-        this.dataMorte = dataMorte;
+    public void setAnoFalecimento(Integer anoFalecimento) {
+        this.anoFalecimento = anoFalecimento;
     }
 
-    public List<Livro> getLivros() {
+    public Set<Livro> getLivros() {
         return livros;
     }
 
-    public void setLivros(List<Livro> livros) {
+    public void setLivros(Set<Livro> livros) {
         this.livros = livros;
+    }
+
+    @Override
+    public String toString() {
+        return "\n----------------------- AUTOR -----------------------" +"\n" +
+                "Autor: " + nome + "\n" +
+                "Ano de nascimento: " + (anoNascimento!=null? anoNascimento.toString() : "Desconhecido") + "\n" +
+                "Ano de falecimento: " + (anoFalecimento!=null? anoFalecimento.toString() : "Desconhecido") + "\n" +
+                "Livros: " + livros.stream().map(b -> b.getTitulo()).collect(Collectors.toSet()) + "\n" +
+                "-----------------------------------------------------";
     }
 }

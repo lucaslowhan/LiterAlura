@@ -1,11 +1,13 @@
 package com.lucaslowhandev.literalura.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
-public record LivroDTO(@JsonAlias("title") String titulo,
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record LivroDTO(@JsonAlias({"title"}) String titulo,
+                       @JsonAlias({"authors"}) List<AutorDTO> autores,
                        @JsonAlias("languages") List<String> idiomas,
-                       @JsonAlias("authors") List<AutorDTO> autores,
-                       @JsonAlias("download_count") Double downloads) {
+                       @JsonAlias("download_count") Integer numeroDeDownloads) {
 }

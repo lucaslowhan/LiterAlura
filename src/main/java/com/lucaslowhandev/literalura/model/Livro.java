@@ -1,30 +1,49 @@
 package com.lucaslowhandev.literalura.model;
 
+import com.lucaslowhandev.literalura.dto.LivroDTO;
 import jakarta.persistence.*;
 
-@Entity
+import java.util.List;
+
+@Entity(name = "livro")
 @Table(name = "livros")
 public class Livro {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String titulo;
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    private String idioma;
+    private Integer numeroDeDownloads;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
     private Autor autor;
 
-    private String languages;
+    public Livro(){}
 
-    private Double downloadCount;
+    public Livro(LivroDTO data){
+        this.titulo = data.titulo();
+        if (data.autores() != null && !data.autores().isEmpty()) {
+            this.autor = new Autor(data.autores().get(0));
+        } else {
+            this.autor = null;
+            System.out.println("Aviso: Autor não informado para o livro " + data.titulo());
+        }
 
-    public Livro(String titulo, Autor autor, String languages, Double downloadCount){
+        if (data.idiomas() != null && !data.idiomas().isEmpty()) {
+            this.idioma = data.idiomas().getFirst();
+        } else {
+            this.idioma = null; // Ou null
+            System.out.println("Aviso: Idioma não informado para o livro " + data.titulo());
+        }
+        this.numeroDeDownloads = data.numeroDeDownloads();
+    }
+
+    public Livro(String titulo, Autor autor, String idioma, Integer numeroDeDownloads){
         this.titulo = titulo;
         this.autor = autor;
-        this.languages = languages;
-        this.downloadCount = downloadCount;
+        this.idioma = idioma;
+        this.numeroDeDownloads = numeroDeDownloads;
     }
 
     public Long getId() {
@@ -43,6 +62,22 @@ public class Livro {
         this.titulo = titulo;
     }
 
+    public String getIdioma() {
+        return idioma;
+    }
+
+    public void setIdioma(String idioma) {
+        this.idioma = idioma;
+    }
+
+    public Integer getNumeroDeDownloads() {
+        return numeroDeDownloads;
+    }
+
+    public void setNumeroDeDownloads(Integer numeroDeDownloads) {
+        this.numeroDeDownloads = numeroDeDownloads;
+    }
+
     public Autor getAutor() {
         return autor;
     }
@@ -51,19 +86,13 @@ public class Livro {
         this.autor = autor;
     }
 
-    public String getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(String languages) {
-        this.languages = languages;
-    }
-
-    public Double getDownloadCount() {
-        return downloadCount;
-    }
-
-    public void setDownloadCount(Double downloadCount) {
-        this.downloadCount = downloadCount;
+    @Override
+    public String toString() {
+        return "\n----------------------- LIVRO -----------------------" + "\n" +
+                "Título: "+ titulo + "\n"+
+                "Autor: " + autor.getNome() + "\n" +
+                "Idioma: " + idioma + "\n" +
+                "Número de downloads: "+ numeroDeDownloads + "\n" +
+                "-----------------------------------------------------" + "\n";
     }
 }
